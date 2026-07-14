@@ -16,7 +16,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-h_)$9kioi6_-3*7q_9@3$
 
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['.ondigitalocean.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '.ondigitalocean.app').split(',')
 CSRF_TRUSTED_ORIGINS = ['https://*.ondigitalocean.app']
 
 
