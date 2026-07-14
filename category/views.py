@@ -3,33 +3,47 @@ from django.shortcuts import render, redirect
 from category.models import Category
 from django.http import JsonResponse
 
-def index_view(request):
+from django.db.models import Count, Avg, Sum, Min, Max
 
-    categories = list(Category.objects.filter(name="Lo").values())  # SELECT * FROM categories; 
+def list_categories(request):
 
-    context =  {
-        "categories": categories
+    response = Category.objects.all() 
+
+    context = {
+        "categories": response
     }
 
-    return JsonResponse(context) 
+    return render(request, "category/index.html", context)
 
-def show_category(request, id):
-    category = Category.objects.last()
+def show_category(request, id_category):
+    category = Category.objects.get(id=id_category)
     context =  {
-        "id": category.id,
-        "name": category.name,
-        "description": category.description
+        "category": category
     }
 
-    return JsonResponse(context) 
+    return render(request, "category/show.html", context)
 
-def create_category_view(request):
+def create_category(request):
+    
+    if request.method == "GET":
+        return render(request, "category/create.html")
+    else:
+        my_name = request.POST['name']
+        my_desc = request.POST['description']
 
-    newCategory = Category.objects.create(
-        name = "Loyer",
-        description = "Vraiment si tu payes pas, tu vas lu l'heure!!!"
-    )
+        newCategory = Category(
+            name=my_name,
+            description = my_desc
+        )
 
-    newCategory.save()
+        savedCate = newCategory.save()
+        if savedCate is not None:
+            return redirect("list-category")
+        else:
+            return render(request, "category/create.html")
 
-    return redirect("categories")
+def update_category(request, id):
+    pass
+
+def delete_category(request, id):
+    pass

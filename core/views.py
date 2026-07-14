@@ -1,9 +1,14 @@
 from django.shortcuts import render
 
-from django.http import HttpResponse
+from transaction.models import Transaction
 
 # Create your views here.
 
 def home_view(request):
+    nb_transactions = Transaction.objects.count()
+    context = {
+        "nbTransactions": nb_transactions
+    }
 
-    return HttpResponse("<h1> Hello Jokko Finance </h1>")
+
+    return render(request, "core/index.html", context)
