@@ -1,5 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 
+from category.forms import CategoryForm
 from category.models import Category
 from django.http import JsonResponse
 
@@ -26,24 +27,46 @@ def show_category(request, id_category):
 def create_category(request):
     
     if request.method == "GET":
-        return render(request, "category/create.html")
+        form = CategoryForm()
+        context = {
+            "form": form
+        }
+        return render(request, "category/create.html", context)
     else:
-        my_name = request.POST['name']
-        my_desc = request.POST['description']
-
-        newCategory = Category(
-            name=my_name,
-            description = my_desc
-        )
-
-        savedCate = newCategory.save()
-        if savedCate is not None:
+        form = CategoryForm(request.POST)        
+        if form.is_valid():
+            form.save()
             return redirect("list-category")
         else:
-            return render(request, "category/create.html")
+            context = {
+                "form": form
+            }
+            return render(request, "category/create.html", context)
 
 def update_category(request, id):
-    pass
+    cat = get_object_or_404(Category, id=id)
+    if request.method == "POST": 
+        form = CategoryForm(request.POST, instance=cat)
+        if form.is_valid():
+            form.save()
+            return redirect("list-category")
+        else: 
+            context = {
+                "cat": cat,
+                "form": form
+            }
+        return render(request, "category/update.html", context)
+
+    else: 
+        form = CategoryForm(instance=cat)
+        context = {
+            "cat": cat,
+            "form": form
+        }
+        return render(request, "category/update.html", context)
+    
 
 def delete_category(request, id):
-    pass
+    cat = get_object_or_404(Category, id=id)
+    cat.delete()
+    return redirect("list-category")
