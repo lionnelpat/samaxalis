@@ -8,15 +8,6 @@ function selectType(type) {
   document.getElementById("option-revenu").classList.toggle("selected", type === "revenu");
   document.getElementById("option-depense").classList.toggle("selected", type === "depense");
   document.querySelector(`input[name="type"][value="${type}"]`).checked = true;
-  populateCategorySelect(type);
-}
-
-function populateCategorySelect(type, selectedId = "") {
-  const select = document.getElementById("category");
-  const matching = getCategories().filter((c) => c.type === type);
-
-  select.innerHTML = `<option value="">Sans catégorie</option>` +
-    matching.map((c) => `<option value="${c.id}" ${c.id === selectedId ? "selected" : ""}>${c.icon} ${escapeHtml(c.name)}</option>`).join("");
 }
 
 function initTransactionForm() {
@@ -33,7 +24,7 @@ function initTransactionForm() {
     const transaction = getTransaction(id);
     if (!transaction) {
       alert("Transaction introuvable.");
-      window.location.href = "transactions.html";
+      window.location.href = "/transaction-list";
       return;
     }
     document.getElementById("form-eyebrow").textContent = "Modifier";
@@ -52,7 +43,7 @@ function initTransactionForm() {
     document.getElementById("date").value = new Date().toISOString().slice(0, 10);
   }
 
-  document.getElementById("transaction-form").addEventListener("submit", handleSubmit);
+  // document.getElementById("transaction-form").addEventListener("submit", handleSubmit);
 }
 
 function validateField(inputId, isValid) {
@@ -88,7 +79,7 @@ function handleSubmit(event) {
 
   saveTransaction(transaction);
   showToast(`Transaction « ${label} » enregistrée.`);
-  window.location.href = "transactions.html";
+  window.location.href = "/transaction-list";
 }
 
 document.addEventListener("DOMContentLoaded", initTransactionForm);

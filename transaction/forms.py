@@ -19,7 +19,5 @@ class TransactionForm(forms.ModelForm):
             "description": forms.Textarea(attrs={
                 "class": "form-control"
             }),
-
-            "date": forms.DateInput(attrs={"type": "date"}),
             "amount": forms.NumberInput(attrs={"min": 0, "step": 1,  "class": "form-control"}),
         }

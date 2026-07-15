@@ -14,6 +14,17 @@
     </div>
 </div>
 
+<div >
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-info alert-dismissible fade show" role="alert" data-level="{{ message.tags }}">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
 <form class="filter-bar" id="filter-form">
     <div class="field">
         <label for="search">Recherche</label>
@@ -47,13 +58,7 @@
 </form>
 
 <div class="results-meta" id="results-meta"></div>
-    <div >
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-primary" role="alert" data-level="{{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    </div>
+    
 
     <div class="table-wrap">
         <table>
@@ -93,7 +98,7 @@
                     {% endif %}
                     <td data-label="Actions" class="cell-actions">
                         <a href="{% url 'update-transaction' trx.id %}" class="btn btn-ghost btn-sm">Modifier</a>
-                        <button class="btn btn-danger btn-sm" href="{% url 'delete-transaction' trx.id %}">Suppr.</button>
+                        <a class="btn btn-danger btn-sm" href="{% url 'delete-transaction' trx.id %}">Suppr.</a>
                     </td>
                 </tr>
             {% empty  %}

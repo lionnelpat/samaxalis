@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from transaction.models import Transaction
+from category.models import Category
 from transaction.forms import TransactionForm
 
 from django.contrib import messages
@@ -24,23 +25,27 @@ def show_transaction(request, id):
 
 
 def create_transaction(request): 
+    categories = Category.objects.all()
 
     if request.method == "POST": 
         form = TransactionForm(request.POST)
-
+        print(form.is_valid())
         if form.is_valid():
             form.save()
             messages.success(request, "Transaction bien enregistrée!!!")
             return redirect("list-transactions")
         else:
+            print(form.errors)
             messages.error(request, "Erreur lors de la création!!!! ")
             context = {
+                "categories": categories,
                 "form": form
             }
             return render(request, "transaction/create.html", context)
     else: 
         trx_form = TransactionForm()
         context = {
+            "categories": categories,
             "form": trx_form
         }
         return render(request, "transaction/create.html", context)
@@ -50,6 +55,7 @@ def update_transaction(request, id):
 
     # je recupère la trx a modifier 
     trx = get_object_or_404(Transaction, id=id)
+    categories = Category.objects.all()
 
     if request.method == "POST": 
         form = TransactionForm(request.POST,instance=trx)
@@ -59,6 +65,7 @@ def update_transaction(request, id):
             return redirect("list-transactions")
         else: 
             context = {
+                "categories": categories,
                 "trx": trx,
                 "form": form
             }
@@ -69,6 +76,7 @@ def update_transaction(request, id):
         form = TransactionForm(instance=trx)
 
         context = {
+            "categories": categories,
             "trx": trx,
             "form": form
         }
