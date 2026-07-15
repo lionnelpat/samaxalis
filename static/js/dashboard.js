@@ -78,7 +78,7 @@ function renderCategorySummary() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  renderStats();
-  renderRecent();
-  renderCategorySummary();
+  // renderStats();
+  // renderRecent();
+  // renderCategorySummary();
 });

@@ -1,0 +1,20 @@
+{% load static %} 
+
+<aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-name">Jokko Finance</span>
+        <span class="brand-tag">MonBudget · Dakar</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="{% url 'home' %}" class="">
+            <span>Tableau de bord</span>
+        </a>
+        <a href="{% url 'list-category' %}" class="">
+            <span>Catégories</span>
+        </a>
+        <a href="{% url 'list-transactions' %}" class="">
+            <span>Transactions</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">Connecté en tant que <strong style="color:#fff">Aïssatou D.</strong></div>
+</aside>

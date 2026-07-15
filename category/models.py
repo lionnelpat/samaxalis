@@ -1,5 +1,5 @@
 from django.db import models
-from datetime import datetime
+from django.db.models import Sum
 
 class Category(models.Model):
 
@@ -9,4 +9,11 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+    @property
+    def total_transactions(self):
+        total = self.transaction_set.aggregate(total=Sum("amount"))["total"]
+        return total or 0
+
 

@@ -1,58 +1,63 @@
+{% extends 'base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tableau de bord — Jokko Finance</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body data-page="dashboard">
 
-  <div class="app-shell">
-    <div id="sidebar-mount"></div>
+{% block main %}
 
-    <main class="app-main">
-      <div class="app-topbar">
-        <div>
-          <span class="eyebrow">Vue d'ensemble</span>
-          <h1>Bonjour Aïssatou 👋</h1>
-        </div>
-        <div class="app-topbar-actions">
-          <a href="transaction-form.html" class="btn btn-primary">+ Nouvelle transaction</a>
-        </div>
-      </div>
+<div class="app-topbar">
+  <div>
+      <span class="eyebrow">Vue d'ensemble</span>
+      <h1>Bonjour Aïssatou 👋</h1>
+  </div>
+  <div class="app-topbar-actions">
+      <a href="{% url 'create-transaction' %}" class="btn btn-primary">+ Nouvelle transaction</a>
+  </div>
+</div>
 
-      <div class="stat-row" id="stat-row">
-        <!-- rempli par js/dashboard.js -->
-      </div>
+<div class="stat-row" id="stat-row">
+  <!-- rempli par js/dashboard.js -->
+  <div class="stat-card">
+    <div class="stat-label">Solde global</div>
+    {% if summary.solde >= 0 %}
+    <div class="stat-value positive ">{{summary.solde}}</div>
+    {% else %}
+    <div class="stat-value negative ">{{summary.solde}}</div>
+    {% endif %}
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Revenus</div>
+    <div class="stat-value positive">{{summary.revenus}}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Dépenses</div>
+    <div class="stat-value negative">{{summary.depenses}}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Transactions</div>
+    <div class="stat-value">{{summary.count}}</div>
+  </div>
+</div>
 
-      <div class="two-col">
-        <div class="card card-pad">
-          <h3 style="margin-bottom:16px;">Dernières transactions {{ nbTransactions }}</h3>
-          <div id="recent-list"></div>
-          <div style="margin-top:16px;">
-            <a href="transactions.html" class="btn btn-secondary btn-sm">Voir toutes les transactions →</a>
-          </div>
-        </div>
-
-        <div class="card card-pad">
-          <h3 style="margin-bottom:16px;">Catégories</h3>
-          <div id="category-summary"></div>
-          <div style="margin-top:16px;">
-            <a href="categories.html" class="btn btn-secondary btn-sm">Gérer les catégories →</a>
-          </div>
-        </div>
-      </div>
-    </main>
+<div class="two-col">
+  <div class="card card-pad">
+    <h3 style="margin-bottom:16px;">Dernières transactions </h3>
+    <div id="recent-list"></div>
+    <div style="margin-top:16px;">
+      <a href="{% url 'list-transactions' %}" class="btn btn-secondary btn-sm">Voir toutes les transactions →</a>
+    </div>
   </div>
 
-  <script src="{% static 'js/utils.js' %}"></script>
-  <script src="{% static 'js/data.js' %}"></script>
-  <script src="{% static 'js/nav.js' %}"></script>
-  <script src="{% static 'js/dashboard.js' %}"></script>
-</body>
-</html>
+  <div class="card card-pad">
+    <h3 style="margin-bottom:16px;">Catégories</h3>
+    <div id="category-summary"></div>
+    <div style="margin-top:16px;">
+      <a href="{% url 'list-category' %}" class="btn btn-secondary btn-sm">Gérer les catégories →</a>
+    </div>
+  </div>
+</div>
+  
+{% endblock main %}
+  
+
+
+

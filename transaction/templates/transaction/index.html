@@ -1,79 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jokko Finance - transaction</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-     <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                </li>
+{% block main %}
 
-                <li class="nav-item">
-                    <a class="nav-link " aria-current="page" href="{% url 'list-category' %}">Catégories</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link " aria-current="page" href="{% url 'list-transactions' %}">transaction</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+<div class="app-topbar">
+    <div>
+        <span class="eyebrow">Budget · Historique</span>
+        <h1>Transactions</h1>
+    </div>
+    <div class="app-topbar-actions">
+        <a href="{% url 'create-transaction' %}" class="btn btn-primary">+ Nouvelle transaction</a>
+    </div>
+</div>
 
-    <div class="container mt-5">
-        <div >
-         {% if messages %}
+<form class="filter-bar" id="filter-form">
+    <div class="field">
+        <label for="search">Recherche</label>
+        <input type="search" id="search" placeholder="Libellé ou note...">
+    </div>
+    <div class="field">
+        <label for="filter-category">Catégorie</label>
+        <select id="filter-category">
+        <option value="">Toutes</option>
+        </select>
+    </div>
+    <div class="field">
+        <label for="filter-type">Type</label>
+        <select id="filter-type">
+        <option value="">Tous</option>
+        <option value="revenu">Revenu</option>
+        <option value="depense">Dépense</option>
+        </select>
+    </div>
+    <div class="field">
+        <label for="date-from">Du</label>
+        <input type="date" id="date-from">
+    </div>
+    <div class="field">
+        <label for="date-to">Au</label>
+        <input type="date" id="date-to">
+    </div>
+    <div class="field">
+        <button type="button" class="btn btn-secondary btn-block" id="reset-filters">Réinitialiser</button>
+    </div>
+</form>
+
+<div class="results-meta" id="results-meta"></div>
+    <div >
+        {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-primary" role="alert" data-level="{{ message.tags }}">{{ message }}</div>
             {% endfor %}
         {% endif %}
-        </div>
-        <div class="mb-3">
-            <a class="btn btn-primary" href="{% url 'create-transaction' %}">ajouter </a>
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Label</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Montant</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for trx in transactions %}
-                    <tr>
-                        <th scope="row">{{ trx.id }}</th>
-                        <td>{{ trx.label |upper }}</td>
-                        <td>{{ trx.trx_date|date:"d/m/Y"  }}</td>
-                        <td>{{ trx.amount }}</td>
-                        <td>
-                            <a href="{% url 'show-transaction' trx.id %}" class="btn btn-info">voir </a>
-                            <a href="{% url 'update-transaction' trx.id %}" class="btn btn-warning">modifier </a>
-                            <a href="{% url 'delete-transaction' trx.id %}"class="btn btn-danger">supprimer </a>
-                        </td>
-                    </tr>
-
-                {% endfor %}
-
-            </tbody>
-        </table>
     </div>
 
+    <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Libellé</th>
+              <th>Catégorie</th>
+              <th>
+                <a href="#" id="sort-date" style="color:inherit;">Date ↓</a>
+              </th>
+              <th style="text-align:right;">
+                <a href="#" id="sort-amount" style="color:inherit;">Montant</a>
+              </th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="transactions-body">
+            {% for trx in transactions %}
+                <tr>
+                    <td data-label="Libellé" class="cell-label">
+                        <a href="{% url 'update-transaction' trx.id %">{{ trx.label }}</a>
+                    </td>
+                    <td data-label="Catégorie">
+                        {% if trx.trx_type == "IN" %}
+                            <span class="badge badge-income">{{ trx.get_trx_type_display}} </span>
+                        {% elif trx.trx_type == "EX" %}
+                            <span class="badge badge-expense">{{ trx.get_trx_type_display}} </span>
+                        {% else %}
+                            <span class="cell-sub">Sans catégorie </span>
+                        {% endif %}
+                    </td>
+                    <td data-label="Date">{{ trx.trx_date }}</td>
+                    {% if trx.trx_type == "IN" %}
+                        <td data-label="Montant" class="cell-amount positive">+ {{ trx.amount }}</td>
+                    {% else %}
+                        <td data-label="Montant" class="cell-amount negative">- {{ trx.amount }}</td> 
+                    {% endif %}
+                    <td data-label="Actions" class="cell-actions">
+                        <a href="{% url 'update-transaction' trx.id %}" class="btn btn-ghost btn-sm">Modifier</a>
+                        <button class="btn btn-danger btn-sm" href="{% url 'delete-transaction' trx.id %}">Suppr.</button>
+                    </td>
+                </tr>
+            {% empty  %}
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <div class="empty-icon">🔍</div>
+                            <h3>Aucune transaction ne correspond</h3>
+                            <p>Essayez d'élargir vos filtres ou votre recherche.</p>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
     
-    
-    
-
-
-
-
-        
-</body>
-</html>
+{% endblock main %}

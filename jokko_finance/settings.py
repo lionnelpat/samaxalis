@@ -16,12 +16,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-h_)$9kioi6_-3*7q_9@3$p1t-1&k!lmfd(ac4rfgx%p73f0_2t')
 
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+IS_PROD = os.environ.get('DATABASE_URL') is not None
 
-ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = [
-    'https://samaxalis-2ermk.ondigitalocean.app',
-    'https://*.ondigitalocean.app',
-    ]
+DEBUG = not IS_PROD
+
+if IS_PROD: 
+    ALLOWED_HOSTS = ["*"]
+    CSRF_TRUSTED_ORIGINS = [
+        'https://samaxalis-2ermk.ondigitalocean.app',
+        'https://*.ondigitalocean.app',
+        ]
+else:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
+
 
 
 # Application definition
@@ -54,7 +62,7 @@ ROOT_URLCONF = 'jokko_finance.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -70,15 +78,23 @@ WSGI_APPLICATION = 'jokko_finance.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+# https://docs.djangoproject.com/en/6.0/ref/settings/#databases 
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600,
-        ssl_require=True,   # Render exige SSL
-    )
-}
+if IS_PROD: 
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            ssl_require=True,   # Render exige SSL
+        )
+    }
+else: 
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 STORAGES = {
